@@ -2,3 +2,5 @@
 /packages
 .env
 
+./nse.conf
+
