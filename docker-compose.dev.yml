@@ -1,0 +1,41 @@
+services:
+    db:
+        image: postgres:16
+        container_name: postgres_edms
+        environment:
+            POSTGRES_USER: ${PG_USER}
+            POSTGRES_PASSWORD: ${PG_PASSWORD}
+            POSTGRES_DB: ${PG_DB}
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DB}"]
+        volumes:
+            - pgdata_dev:/var/lib/postgresql/data
+
+    edms:
+        build: .
+        image: zinox/nse-edms
+        container_name: nse_edms
+        ports:
+            - "${APP_PORT:-8080}:8080"
+        environment:
+            - NUXEO_CLID=${PROJECT_CLID}
+            - NUXEO_DB_TYPE=postgresql
+            - NUXEO_TEMPLATES=default,postgresql
+            - NUXEO_DB_HOST=db
+            - NUXEO_DB_USER=${PG_USER}
+            - NUXEO_DB_PASSWORD=${PG_PASSWORD}
+            - NUXEO_DB_NAME=${PG_DB}
+            - NUXEO_DEV_MODE=true
+            - NUXEO_PACKAGES=/opt/nuxeo/server/local-packages/nuxeo-web-ui.zip /opt/nuxeo/server/local-packages/zinox-nse.zip
+        volumes:
+            - edms_data:/var/lib/nuxeo
+            - edms_logs:/var/log/nuxeo
+            - ./nse.conf:/etc/nuxeo/conf.d/nse.conf:ro
+        depends_on:
+            db:
+                condition: service_healthy
+
+volumes:
+    pgdata_dev:
+    edms_data:
+    edms_logs:

@@ -1,0 +1,62 @@
+services:
+    db:
+        image: postgres:16
+        container_name: postgres_edms
+        environment:
+            POSTGRES_USER: ${PG_USER}
+            POSTGRES_PASSWORD: ${PG_PASSWORD}
+            POSTGRES_DB: ${PG_DB}
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DB}"]
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+
+    edms:
+        image: zinoxtech/nse_edms:latest
+        container_name: nse_edms
+        ports:
+            - "${APP_PORT:-8080}:8080"
+        environment:
+            - NUXEO_CLID=${PROJECT_CLID}
+            - NUXEO_DB_TYPE=postgresql
+            - NUXEO_TEMPLATES=default,postgresql
+            - NUXEO_DB_HOST=db
+            - NUXEO_DB_USER=${PG_USER}
+            - NUXEO_DB_PASSWORD=${PG_PASSWORD}
+            - NUXEO_DB_NAME=${PG_DB}
+            - NUXEO_PACKAGES=/opt/nuxeo/server/local-packages/nuxeo-web-ui.zip /opt/nuxeo/server/local-packages/zinox-nse.zip
+        volumes:
+            - edms_data:/var/lib/nuxeo
+            - edms_logs:/var/log/nuxeo
+            - ./nse.conf:/etc/nuxeo/conf.d/nse.conf:ro
+        depends_on:
+            db:
+                condition: service_healthy
+
+    nginx:
+        image: nginx:alpine
+        container_name: nginx_proxy
+        ports:
+            - "80:80"
+            - "443:443"
+        environment:
+            - DOMAIN=${DOMAIN_NAME}
+            - CERT_NAME=${DOMAIN_NAME}
+            - UPSTREAM=edms
+            - APP_PORT=${APP_PORT:-8080}
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf.template:ro
+            - ./certbot/conf:/etc/letsencrypt:ro
+            - ./certbot/www:/var/www/certbot:ro
+        command: /bin/sh -c "envsubst '\$DOMAIN \$CERT_NAME \$UPSTREAM \$APP_PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && exec nginx -g 'daemon off;'"
+
+    certbot:
+        image: certbot/certbot
+        volumes:
+            - ./certbot/conf:/etc/letsencrypt
+            - ./certbot/www:/var/www/certbot
+
+volumes:
+    pgdata:
+    edms_data:
+    edms_logs:
