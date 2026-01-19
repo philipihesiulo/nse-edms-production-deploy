@@ -3,4 +3,4 @@
 .env
 
 /config/nse.conf
-/app/dist
+/app/dist/packages

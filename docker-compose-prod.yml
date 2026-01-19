@@ -22,7 +22,6 @@ services:
         volumes:
             - edms_data:/var/lib/edms
             - edms_logs:/var/log/edms
-            - ./nse.conf:/etc/edms/conf.d/nse.conf:ro
         depends_on:
             db:
                 condition: service_healthy
@@ -39,7 +38,7 @@ services:
             - UPSTREAM=edms
             - APP_PORT=${APP_PORT:-8080}
         volumes:
-            - ./nginx.conf:/etc/nginx/nginx.conf.template:ro
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf.template:ro
             - ./certbot/conf:/etc/letsencrypt:ro
             - ./certbot/www:/var/www/certbot:ro
         command: /bin/sh -c "envsubst '\$DOMAIN \$CERT_NAME \$UPSTREAM \$APP_PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && exec nginx -g 'daemon off;'"

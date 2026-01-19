@@ -9,8 +9,8 @@ USER 900
 
 COPY --chown=edms:0 config/nse.conf /etc/edms/conf.d/nse.conf
 
-COPY --chown=edms:0 app/dist/web-ui.zip $EDMS_HOME/local-packages/web-ui.zip
-COPY --chown=edms:0 app/distpackages/nse-theme.zip $EDMS_HOME/local-packages/nse-theme.zip
+COPY --chown=edms:0 app/dist/packages/web-ui.zip $EDMS_HOME/local-packages/web-ui.zip
+COPY --chown=edms:0 app/dist/packages/nse-theme.zip $EDMS_HOME/local-packages/nse-theme.zip
 
 RUN mv $EDMS_HOME/templates/common-base/conf/Catalina/localhost/nuxeo.xml.nxftl \
        $EDMS_HOME/templates/common-base/conf/Catalina/localhost/edms.xml.nxftl
