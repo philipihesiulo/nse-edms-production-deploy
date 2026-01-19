@@ -4,4 +4,6 @@ docker run --name nse-edms \
     zinox/nse-edms
 
 
-compose -f docker-compose.dev.yml up --build
+docker compose -f docker-compose.dev.yml up --build
+
+docker run --name nse-edms -p 8080:8080 zinoxtech/nse_edms:v2

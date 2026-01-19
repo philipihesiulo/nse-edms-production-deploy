@@ -2,5 +2,5 @@
 /packages
 .env
 
-./nse.conf
-
+/config/nse.conf
+/app/dist
