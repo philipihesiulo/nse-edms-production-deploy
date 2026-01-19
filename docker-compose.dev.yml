@@ -29,7 +29,7 @@ services:
         volumes:
             - edms_data:/var/lib/edms
             - edms_logs:/var/log/edms
-            - ./nse.conf:/etc/edms/conf.d/nse.conf:ro
+            - ./config/nse.conf:/etc/edms/conf.d/nse.conf:ro
         depends_on:
             db:
                 condition: service_healthy

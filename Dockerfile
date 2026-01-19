@@ -7,7 +7,7 @@ RUN dnf -y --enablerepo=ol9_codeready_builder install ffmpeg
 
 USER 900
 
-COPY --chown=edms:0 config/nse.conf /etc/edms/conf.d/nse.conf
+# COPY --chown=edms:0 config/nse.conf /etc/edms/conf.d/nse.conf
 
 COPY --chown=edms:0 app/dist/packages/web-ui.zip $EDMS_HOME/local-packages/web-ui.zip
 COPY --chown=edms:0 app/dist/packages/nse-theme.zip $EDMS_HOME/local-packages/nse-theme.zip
