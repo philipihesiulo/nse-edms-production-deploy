@@ -1,7 +1,10 @@
+name: NSE_EDMS
+version: "2"
+
 services:
     db:
         image: postgres:16
-        container_name: postgres_edms
+        container_name: postgres_database
         environment:
             POSTGRES_USER: ${PG_USER}
             POSTGRES_PASSWORD: ${PG_PASSWORD}
@@ -17,19 +20,13 @@ services:
         container_name: nse_edms
         ports:
             - "${APP_PORT:-8080}:8080"
-        # environment:
-        #     - NUXEO_CLID=${PROJECT_CLID}
-        #     - NUXEO_DB_TYPE=postgresql
-        #     - NUXEO_TEMPLATES=default,postgresql
-        #     - NUXEO_DB_HOST=db
-        #     - NUXEO_DB_USER=${PG_USER}
-        #     - NUXEO_DB_PASSWORD=${PG_PASSWORD}
-        #     - NUXEO_DB_NAME=${PG_DB}
-        #     - NUXEO_DEV=true
+        environment:
+            #     - NUXEO_CLID=${PROJECT_CLID}
+            - NUXEO_DEV=false
         volumes:
-            - edms_data:/var/lib/edms
-            - edms_logs:/var/log/edms
-            - ./config/nse.conf:/etc/edms/conf.d/nse.conf:ro
+            - edms_data:${EDMS_DATA_PATH}
+            - edms_logs:${EDMS_LOGS_PATH}
+            # - ./config/nse.conf:${EDMS_CONF_PATH}/conf.d/nse.conf:ro
         depends_on:
             db:
                 condition: service_healthy
