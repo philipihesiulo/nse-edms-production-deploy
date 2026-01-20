@@ -4,7 +4,7 @@ version: "2"
 services:
     db:
         image: postgres:16
-        container_name: postgres_edms
+        container_name: postgres_database
         environment:
             POSTGRES_USER: ${PG_USER}
             POSTGRES_PASSWORD: ${PG_PASSWORD}
@@ -16,7 +16,7 @@ services:
 
     edms:
         image: zinoxtech/nse_edms:v2
-        container_name: nse_edms
+        container_name: edms_software
         ports:
             - "${APP_PORT:-8080}:8080"
         environment:
@@ -48,6 +48,7 @@ services:
 
     certbot:
         image: certbot/certbot
+        container_name: certbot_service
         volumes:
             - ./certbot/conf:/etc/letsencrypt
             - ./certbot/www:/var/www/certbot
