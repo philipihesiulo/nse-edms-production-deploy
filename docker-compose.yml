@@ -34,7 +34,7 @@ services:
             timeout: 10s
             retries: 5
     edms:
-        image: zinoxtech/nse_edms:v5
+        image: zinoxtech/nse_edms:v6
         container_name: prod_edms_software
         ports:
             - "${APP_PORT:-8080}:8080"
